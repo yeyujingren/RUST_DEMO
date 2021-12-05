@@ -7,22 +7,34 @@ pub struct Config {
 }
 
 impl Config {
-  pub fn new(args: &[String]) -> Result<Config, &'static str> {
-      if args.len() < 3 {
-          return Err("it need two arguments like \n cargo run query filename");
-      }
-      let query = args[1].clone();
-      let filename = args[2].clone();
-      // let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
-      let case_sensitive = args[3].clone() == "true";
-      println!("=====>{}", case_sensitive);
-      Ok(
-          Config {
-              query,
-              filename,
-              case_sensitive
-          }
-      )
+  pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
+    //   if args.len() < 4 {
+    //       return Err("it need three arguments like \n cargo run query filename false");
+    //   }
+    //   let query = args[1].clone();
+    //   let filename = args[2].clone();
+    args.next();
+    let query = match args.next() {
+        Some(arg) => arg,
+        None => return Err("Didn't get a query string")
+    };
+    let filename = match args.next() {
+        Some(arg) => arg,
+        None => return Err("Didn't get a filename string")
+    };
+    let case_sensitive = match args.next() {
+        Some(arg) => arg.to_string() == "true",
+        None => return Err("Didn't get a case_sensitive string")
+    };
+
+    println!("=====>{}", case_sensitive);
+    Ok(
+        Config {
+            query,
+            filename,
+            case_sensitive
+        }
+    )
   }
 }
 
@@ -54,15 +66,9 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents:&'a str) -> Vec<&'a str> {
-  let query = query.to_lowercase();
-  let mut results = Vec::new();
-
-  for line in contents.lines() {
-    if line.to_lowercase().contains(&query) {
-      results.push(line);
-    }
-  }
-  results
+    contents.lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 #[cfg(test)]
