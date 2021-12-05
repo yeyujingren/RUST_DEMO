@@ -1,23 +1,27 @@
-use std::{ env, process };
-use minigrep::Config;
-
+use minigrep::{generate_workout, interator_dector};
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let config = Config::new(&args)
-        .unwrap_or_else(|err| {
-            eprintln!("Problem parsing argument: \n {}", err);
-            process::exit(1);
-        });
-    println!("In file {}", config.filename);
+    let simulated_user_specified_value = 10;
+    let simulated_random_number = 7;
 
-    // run(config)
-    //     .unwrap_or_else(|err| {
-    //         println!("There has something wrong: \n{}", err);
-    //         process::exit(1);
-    //     });
+    // generate_workout(
+    //     simulated_user_specified_value,
+    //     simulated_random_number
+    // );
+    // let x = vec![1,2,3];
+    // let equal_to_x = move |z| z == x;
+    
+    // // BUG
+    // // println!("can't use x here: {:?}", x);
 
-    if let Err(e) = minigrep::run(config) {
-        eprintln!("There has something wrong: \n {}", e);
-        process::exit(1);
-    }
+    // let y = vec![1,2,3];
+
+    // assert!(equal_to_x(y));
+
+    // let v1 = vec![1,2,3];
+    // let v1_iter = v1.iter();
+    // for val in v1_iter {
+    //     println!("Got: {}", val);
+    // }
+
+    interator_dector();
 }
