@@ -1,98 +1,52 @@
-use std::{ error::Error, fs, env};
+// //! # minigrep
+// //! 
+// //! `minigrep` is a collection of utilities to make performing certain
+// //! calculations more convenient
 
-pub struct Config {
-  pub query: String,
-  pub filename: String,
-  pub case_sensitive: bool
-}
+// /// Adds one to the number given.
+// /// 
+// /// # Example
+// /// 
+// /// ```
+// /// let arg = 5;
+// /// let answer = minigrep::add_one(arg);
+// /// 
+// /// assert_eq!(6, answer)
+// /// ```
+// pub fn add_one(x: i32) -> i32 {
+//   x+1
+// }
 
-impl Config {
-  pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
-    //   if args.len() < 4 {
-    //       return Err("it need three arguments like \n cargo run query filename false");
-    //   }
-    //   let query = args[1].clone();
-    //   let filename = args[2].clone();
-    args.next();
-    let query = match args.next() {
-        Some(arg) => arg,
-        None => return Err("Didn't get a query string")
-    };
-    let filename = match args.next() {
-        Some(arg) => arg,
-        None => return Err("Didn't get a filename string")
-    };
-    let case_sensitive = match args.next() {
-        Some(arg) => arg.to_string() == "true",
-        None => return Err("Didn't get a case_sensitive string")
-    };
+//! # Art
+//! 
+//! A library modeling artistic concept
 
-    println!("=====>{}", case_sensitive);
-    Ok(
-        Config {
-            query,
-            filename,
-            case_sensitive
-        }
-    )
+pub use self::kinds::PrimaryColor;
+pub use self::kinds::SecondaryColor;
+pub use self::utils::mix;
+
+pub mod kinds {
+  /// The primary colors according to the RYB color model
+  pub enum PrimaryColor {
+    Red,
+    Yellow,
+    Blue
+  }
+
+  // Then secondary colors according to the RYB color model
+  pub enum SecondaryColor {
+    Orange,
+    Green,
+    Purple,
   }
 }
 
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-  let contents = fs::read_to_string(config.filename)?;
+pub mod utils {
+  use crate::kinds::*;
 
-  let results = if config.case_sensitive {
-    search(&config.query, &contents)
-  } else {
-    search_case_insensitive(&config.query, &contents)
-  };
-
-  for line in results {
-    println!("{}", line);
-  }
-
-  // println!("With text: \n {}", contents);
-  Ok(())
-}
-
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-  let mut results = Vec::new();
-  for line in contents.lines() {
-    if line.contains(query) {
-      results.push(line);
-    }
-  }
-  results
-}
-
-pub fn search_case_insensitive<'a>(query: &str, contents:&'a str) -> Vec<&'a str> {
-    contents.lines()
-        .filter(|line| line.contains(query))
-        .collect()
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[test]
-  fn case_sensitive() {
-    let query = "duct";
-    let contents = "Rust duct:\nsafe, fast, productive.\nPick three.\nDuct tape.";
-    assert_eq!(
-      vec!["safe, fast, productive."],
-      search(query, contents)
-    );
-  }
-  
-  #[test]
-  fn case_insensitive() {
-    let query = "rUSt";
-    let contents = "Rust:\nsafe, fast, productive.\nPick three.\nTrust me.";
-
-    assert_eq!(
-      vec!["Rust:", "Trust me."],
-      search_case_insensitive(query, contents)
-    )
+  /// Combines two primary colrs in equal amounts to create
+  /// a secondary color
+  pub fn mix(c1: PrimaryColor, c2: SecondaryColor) -> SecondaryColor {
+    c2
   }
 }
