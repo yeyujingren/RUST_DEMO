@@ -1,185 +1,80 @@
-// use crate::List::{ Cons, Nil };
-// use std::ops::Deref;
-// use std::mem::drop;
-// use std::rc::Rc;
-
-// enum List {
-//     Cons(i32, Rc<List>),
-//     Nil
+// use std::thread;
+// use std::time::Duration;
+// fn main() {
+//     let v = vec![1,2,3];
+//     let handle = thread::spawn(move || {
+//         println!("Here's a vector: {:?}", v);
+//     });
+//     // let handle = thread::spawn(|| {
+//     //     for i in 1..10 {
+//     //         println!("hi number {} from the spawned thread!", i);
+//     //         thread::sleep(Duration::from_millis(1));
+//     //     }
+//     // });
+//     // for i in 1..5 {
+//     //     println!("hi, number {} from the main thread", i);
+//     //     thread::sleep(Duration::from_millis(1));
+//     // }
+//     // drop(v);
+//     handle.join().unwrap();
 // }
 
-// struct MyBox<T>(T);
-// impl<T> MyBox<T> {
-//     fn new(x: T) -> MyBox<T> {
-//         MyBox(x)
-//     }
-// }
-
-// impl<T> Deref for MyBox<T> {
-//     type Target = T;
-//     fn deref(&self) -> &T {
-//         &self.0
-//     }
-// }
-
-// struct CustomSmartPointer {
-//     data: String
-// }
-
-// impl Drop for CustomSmartPointer {
-//     fn drop(&mut self) {
-//         println!("Dropping CustomSmartPointer with data: {}", self.data);
-//     }
-// }
+// 16.2-1
+// use std::sync::mpsc;
+// use std::thread;
 
 // fn main() {
-    // let list = Cons(2, Cons(3, Nil));
-    // let list = Cons(1,
-    //     Box::new(
-    //         Cons(2,
-    //             Box::new(
-    //                 Cons(3,
-    //                     Box::new(Nil)
-    //                 )
-    //             )
-    //         )
-    //     )
-    // );
+//     let (tx, rx) = mpsc::channel();
 
-    // let x = 5;
-    // let y = MyBox::new(x);
-    // assert_eq!(5, x);
-    // assert_eq!(5, *y);
+//     thread::spawn(move || {
+//         let val = String::from("hi");
+//         tx.send(val).unwrap();
+//         // println!("val is {}", val);
+//     });
 
-    // let m = MyBox::new(String::from("Rust"));
-    // let string = String::from("123");
-    // hello(&(*string)[..]);
-
-    // let c = CustomSmartPointer {
-    //     data: String::from("my stiff")
-    // };
-
-    // let d = CustomSmartPointer {
-    //     data: String::from("other stuff")
-    // };
-    // println!("CustomSmartPointer created.");
-    // drop(c);
-    // println!("CustomSmartPointer dropped before the end of main");
-
-    // let a = Rc::new(Cons(5,
-    //     Rc::new(
-    //         Cons(10,
-    //             Rc::new(Nil)
-    //         )
-    //     )
-    // ));
-    // println!("count after creating a = {}", Rc::strong_count(&a));
-    // let b = Cons(3, a.clone());
-    // println!("count after creating b = {}", Rc::strong_count(&a));
-    // {
-    //     let c = Cons(4, Rc::clone(&a));
-    //     println!("count after creating c = {}", Rc::strong_count(&a));
-    // }
-    // println!("count after goes out of scope = {}", Rc::strong_count(&a));
-// }
-
-// fn hello(name: &str) {
-//     println!("Hello, {}!", name);
+//     let received = rx.recv().unwrap();
+//     println!("Got, {}", received);
 // }
 
 
-// 15.6-1 循环引用
-// use std::rc::Rc;
-// use std::cell::RefCell;
-// use crate::List::{Cons, Nil};
-
-// #[derive(Debug)]
-// enum List {
-//     Cons(i32, RefCell<Rc<List>>),
-//     Nil,
-// }
-
-// impl List {
-//     fn tail(&self) -> Option<&RefCell<Rc<List>>> {
-//         match self {
-//             Cons(_, item) => Some(item),
-//             Nil => None
-//         }
-//     }
-// }
-
-
-
-// fn main() {
-//     let a = Rc::new(Cons(5, RefCell::new(Rc::new(Nil))));
-
-//     println!("a initial rc count = {}", Rc::strong_count(&a));
-//     println!("a next item = {:?}", a.tail());
-
-//     let b = Rc::new(Cons(10, RefCell::new(Rc::clone(&a))));
-//     println!("a rc count after b creation = {}", Rc::strong_count(&a));
-//     println!("b initial rc count = {}", Rc::strong_count(&b));
-//     println!("b next item = {:?}", b.tail());
-
-//     if let Some(link) = a.tail() {
-//         *link.borrow_mut() = Rc::clone(&b);
-//     }
-
-//     println!("b rc count after changing a = {}", Rc::strong_count(&b));
-//     println!("a rc count after change a = {}", Rc::strong_count(&a));
-// }
-
-// 15.6-2 Weak引用
-use std::rc::{Rc, Weak};
-use std::cell::RefCell;
-
-#[derive(Debug)]
-struct Node {
-    value: i32,
-    children: RefCell<Vec<Rc<Node>>>,
-    parent: RefCell<Weak<Node>>
-}
+// 16.2-2
+use std::thread;
+use std::sync::mpsc;
+use std::time::Duration;
 
 fn main() {
-    let leaf = Rc::new(Node {
-        value: 3,
-        children: RefCell::new(vec![]),
-        parent: RefCell::new(Weak::new())
+    let (tx, rx) = mpsc::channel();
+    let tx1 = tx.clone();
+
+    thread::spawn(move || {
+        let vals = vec![
+            String::from("hi"),
+            String::from("from"),
+            String::from("the"),
+            String::from("thread")
+        ];
+
+        for val in vals {
+            tx1.send(val).unwrap();
+            thread::sleep(Duration::from_secs(1));
+        }
     });
 
-    println!(
-        "leaf strong = {}, weak = {}",
-        Rc::strong_count(&leaf),
-        Rc::weak_count(&leaf)
-    );
+    thread::spawn(move || {
+        let vals = vec![
+            String::from("more"),
+            String::from("message"),
+            String::from("for"),
+            String::from("U")
+        ];
 
-    {
-        let branch = Rc::new(Node {
-            value: 5,
-            parent: RefCell::new(Weak::new()),
-            children: RefCell::new(vec![Rc::clone(&leaf)])
-        });
-    
-        *leaf.parent.borrow_mut() = Rc::downgrade(&branch);
+        for val in vals {
+            tx.send(val).unwrap();
+            thread::sleep(Duration::from_secs(1));
+        }
+    });
 
-        println!(
-            "branch strong = {}, weak = {}",
-            Rc::strong_count(&branch),
-            Rc::weak_count(&branch)
-        );
-
-        println!(
-            "leaf strong = {}, weak = {}",
-            Rc::strong_count(&leaf),
-            Rc::weak_count(&leaf)
-        );
+    for received in rx {
+        println!("Got, {}",received);
     }
-
-    println!("leaf parent = {:?}", leaf.parent.borrow().upgrade());
-
-    println!(
-        "leaf strong = {}, weak = {}",
-        Rc::strong_count(&leaf),
-        Rc::weak_count(&leaf)
-    );
 }
