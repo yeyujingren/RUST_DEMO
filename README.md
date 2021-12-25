@@ -1,2 +1,2 @@
-- TODO
-  - [ ] 实现`cargo run searchstring example-filename.text`
+- rust learning DEMO
+   - from 0 to 1
