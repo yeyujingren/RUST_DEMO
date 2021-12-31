@@ -153,11 +153,37 @@
 // }
 
 // 18.3-7 匹配守卫： 一个指定于match分支模式之后的额外的if条件，他必须也满足才能选择此分支
+// fn main() {
+//   let num = Some(4);
+//   match num {
+//     Some(x) if x > 5 => println!("bigger than five: {}", x),
+//     Some(x) => println!("{}", x),
+//     None => ()
+//   }
+// }
+
+// 18.3-8 @绑定
+// 允许我们在创建一个存放值的同时，测试其值是否匹配模式
+enum Message {
+  Hello {
+    id: i32
+  }
+}
+
 fn main() {
-  let num = Some(4);
-  match num {
-    Some(x) if x > 5 => println!("bigger than five: {}", x),
-    Some(x) => println!("{}", x),
-    None => ()
+  let msg = Message::Hello {
+    id: 5
+  };
+
+  match msg {
+    Message::Hello { id: id_variable @ 3..=7 } => {
+      println!("Found an id in range: {}", id_variable);
+    },
+    Message::Hello { id: 10..=12 } => {
+      println!("FOund an id in another range");
+    },
+    Message::Hello { id } => {
+      println!("Found some other id: {}", id);
+    }
   }
 }
