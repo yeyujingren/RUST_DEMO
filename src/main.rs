@@ -153,33 +153,33 @@
 
 // 19.2-3 完全限定语法与消除歧义：调用相同名称的方法
 // 19.2-3_1 消除歧义
-trait Pilot {
-  fn fly(&self);
-}
+// trait Pilot {
+//   fn fly(&self);
+// }
 
-trait Wizard {
-  fn fly(&self);
-}
+// trait Wizard {
+//   fn fly(&self);
+// }
 
-struct Human;
+// struct Human;
 
-impl Pilot for Human {
-  fn fly(&self) {
-    println!("This is your captain speaking.");
-  }
-}
+// impl Pilot for Human {
+//   fn fly(&self) {
+//     println!("This is your captain speaking.");
+//   }
+// }
 
-impl Wizard for Human {
-  fn fly(&self) {
-    println!("Up!");
-  }
-}
+// impl Wizard for Human {
+//   fn fly(&self) {
+//     println!("Up!");
+//   }
+// }
 
-impl Human {
-  fn fly(&self) {
-    println!("waving arms furiously");
-  }
-}
+// impl Human {
+//   fn fly(&self) {
+//     println!("waving arms furiously");
+//   }
+// }
 
 // fn main() {
 //   let persion = Human;
@@ -259,8 +259,28 @@ impl fmt::Display for Wrapper {
   }
 }
 
-fn main() {
-  let w = Wrapper(vec![String::from("Hello"), String::from("world")]);
+// fn main() {
+//   let w = Wrapper(vec![String::from("Hello"), String::from("world")]);
 
-  println!("w = {}", w);
+//   println!("w = {}", w);
+// }
+
+// 19.3 高级类型
+// 19.3-1 类型别名用来创建类型同义词：将复杂冗长的类型申明简洁化
+type Kilometers = i32;
+
+fn main () {
+  let x: i32 = 5;
+  let y: Kilometers = 5;
+  println!("x+y={}", x+y)
+
+}
+
+// 19.3-2 never
+
+// WARNING! dont use this func in main;
+fn bor() -> ! {
+  loop {
+
+  }
 }
