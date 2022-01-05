@@ -249,15 +249,15 @@
 // }
 
 // 19.2-5 newtype 模式用以在外部类型上实现外部 trait
-use std::fmt;
+// use std::fmt;
 
-struct Wrapper(Vec<String>);
+// struct Wrapper(Vec<String>);
 
-impl fmt::Display for Wrapper {
-  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "[{}]", self.0.join(", "))
-  }
-}
+// impl fmt::Display for Wrapper {
+//   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//     write!(f, "[{}]", self.0.join(", "))
+//   }
+// }
 
 // fn main() {
 //   let w = Wrapper(vec![String::from("Hello"), String::from("world")]);
@@ -267,20 +267,45 @@ impl fmt::Display for Wrapper {
 
 // 19.3 高级类型
 // 19.3-1 类型别名用来创建类型同义词：将复杂冗长的类型申明简洁化
-type Kilometers = i32;
+// type Kilometers = i32;
 
-fn main () {
-  let x: i32 = 5;
-  let y: Kilometers = 5;
-  println!("x+y={}", x+y)
+// fn main () {
+//   let x: i32 = 5;
+//   let y: Kilometers = 5;
+//   println!("x+y={}", x+y)
 
-}
+// }
 
 // 19.3-2 never
 
 // WARNING! dont use this func in main;
-fn bor() -> ! {
-  loop {
+// fn bor() -> ! {
+//   loop {
 
-  }
+//   }
+// }
+
+// 19.4 高级函数与闭包
+// 19.4-1 函数指针
+
+fn add_one(x:i32) -> i32 {
+  x + 1
+}
+
+fn do_twice(f: fn(i32) -> i32, arg: i32) -> i32 {
+  f(arg) + f(arg)
+}
+
+fn main() {
+  let answer = do_twice(add_one, 5);
+  println!("The answer is {}", answer);
+}
+
+// 19.4-2 返回闭包
+fn returns_closeure_error_demo () -> Fn(i32) -> i32 {
+  |x| x+1
+}
+
+fn returns_closeure() -> Box<dyn Fn(i32) -> i32> {
+  Box::new(|x| x + 1)
 }
