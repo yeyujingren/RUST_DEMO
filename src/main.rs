@@ -288,24 +288,52 @@
 // 19.4 高级函数与闭包
 // 19.4-1 函数指针
 
-fn add_one(x:i32) -> i32 {
-  x + 1
-}
+// fn add_one(x:i32) -> i32 {
+//   x + 1
+// }
 
-fn do_twice(f: fn(i32) -> i32, arg: i32) -> i32 {
-  f(arg) + f(arg)
+// fn do_twice(f: fn(i32) -> i32, arg: i32) -> i32 {
+//   f(arg) + f(arg)
+// }
+
+// fn main() {
+//   let answer = do_twice(add_one, 5);
+//   println!("The answer is {}", answer);
+// }
+
+// // 19.4-2 返回闭包
+// fn returns_closeure_error_demo () -> Fn(i32) -> i32 {
+//   |x| x+1
+// }
+
+// fn returns_closeure() -> Box<dyn Fn(i32) -> i32> {
+//   Box::new(|x| x + 1)
+// }
+
+// 19.5 宏（声明宏、过程宏）
+// 过程宏分类：
+// 自定义 #[derive] 宏在结构体和枚举上指定通过 derive 属性添加的代码
+// 类属性（Attribute-like）宏定义可用于任何项的自定义属性
+// 类函数宏看起来像函数，不过作用于作为参数传递的 token
+
+// 宏 VS 函数 （宏 === 注释器 ？？）
+// 宏是一个为蟹其他代码而写代码的方式，即所谓 **元编程**
+// 1、 一个函数标签必须声明函数参数的个数和类型，宏可以接受不同数量的参数
+// 2、 宏可以再编译器翻译代码前展开（可以在一个给定的类型上实现 trait），函数是在运行时被调用的（trait需要在编译时展开）
+// 3、 宏编写困难，难以维护理解
+// 4、 文件中，宏必须在调用之前定义，或将其引入作用域；函数可以在任何地方定义和调用
+// 19.5-2 过程宏
+use minigrep::HelloMacro;
+
+struct Pancakes;
+
+impl HelloMacro for Pancakes {
+    fn hello_macro() {
+        println!("Hello, Macro! My name is Pancakes!");
+    }
 }
 
 fn main() {
-  let answer = do_twice(add_one, 5);
-  println!("The answer is {}", answer);
+    Pancakes::hello_macro();
 }
 
-// 19.4-2 返回闭包
-fn returns_closeure_error_demo () -> Fn(i32) -> i32 {
-  |x| x+1
-}
-
-fn returns_closeure() -> Box<dyn Fn(i32) -> i32> {
-  Box::new(|x| x + 1)
-}
