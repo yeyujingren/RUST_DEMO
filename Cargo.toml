@@ -11,10 +11,3 @@ opt-level = 0
 
 [profile.release]
 opt-level = 3
-
-[lib]
-proc-macro = true
-
-[dependencies]
-syn = "1.0"
-quote = "1.0"
